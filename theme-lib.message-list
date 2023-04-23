@@ -7,7 +7,13 @@
 <#assign sorting = http.request.parameters.name.get("sort", "") />
  
 <#-- page size -->
-<#assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number />
+
+<#assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> ---->
+Przedstawiony kod utworzy zmienną, której wartość zostanie odczytana z 'coreNode.settings.name', a jeśli nie uda się odczytać wartości- w tym przypadku zostanie ustawiona domyślna wartość na liczbę 10. 
+Aby na stronie znajdowało się zawsze 30 postów, niezależnie od ustawień zewnętrznych, powinniśmy zastosować:
+
+<#assign pageSize = 30 />
+
 <#if user.registered>
    <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
    <#if pageSizeUser?number != pageSize?number>
