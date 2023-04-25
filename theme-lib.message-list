@@ -8,9 +8,9 @@
  
 <#-- page size -->
 
-<#assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> ---->
-Przedstawiony kod utworzy zmienną, której wartość zostanie odczytana z 'coreNode.settings.name', a jeśli nie uda się odczytać wartości- w tym przypadku zostanie ustawiona domyślna wartość na liczbę 10. 
-Aby na stronie znajdowało się zawsze 30 postów, niezależnie od ustawień zewnętrznych, powinniśmy zastosować:
+<#-- assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> ---->
+The code shown will create a variable whose value will be read from 'coreNode.settings.name', and if the value cannot be read - in this case - the default value will be set to 10.
+In order to always have 30 posts on the page, regardless of external settings, we need apply: -->
 
 <#assign pageSize = 30 />
 
@@ -155,8 +155,11 @@ Aby na stronie znajdowało się zawsze 30 postów, niezależnie od ustawień zew
        <#assign msg_status_txt = "theme-lib.general.thread-floated" />
    </#if>
    <#if msg.conversation.solved>
-       <#assign solved = "custom-thread-solved" />
-       <#assign msg_status_icon = "custom-thread-solved" />
+
+   <#-- Task 2:
+   Change the name of class for solved threads (choose your own name) -->
+       <#assign solved = "new-name-thread-solved" />
+       <#assign msg_status_icon = "new-name--thread-solved" />
        <#assign msg_status_txt = "theme-lib.general.thread-solved" />
    </#if>
    <#if !msg.user_context.read>
