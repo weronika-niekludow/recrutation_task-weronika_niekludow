@@ -8,10 +8,9 @@
  
 <#-- page size -->
 
-<#-- assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> ---->
+<#-- assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> 
 The code shown will create a variable whose value will be read from 'coreNode.settings.name', and if the value cannot be read - in this case - the default value will be set to 10.
-In order to always have 30 posts on the page, regardless of external settings, we need apply: 
-
+In order to always have 30 posts on the page, regardless of external settings, we need apply: -->
 <#assign pageSize = 30 />
 
 <#if user.registered>
