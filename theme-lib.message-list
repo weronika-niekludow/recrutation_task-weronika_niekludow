@@ -10,7 +10,7 @@
 
 <#-- assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number /> ---->
 The code shown will create a variable whose value will be read from 'coreNode.settings.name', and if the value cannot be read - in this case - the default value will be set to 10.
-In order to always have 30 posts on the page, regardless of external settings, we need apply: -->
+In order to always have 30 posts on the page, regardless of external settings, we need apply: 
 
 <#assign pageSize = 30 />
 
@@ -41,18 +41,31 @@ In order to always have 30 posts on the page, regardless of external settings, w
 <#assign whereClause = label_query />
  
 <#switch sorting>
-   <#case "kudos">
-       <#assign orderClause = "ORDER BY kudos.sum(weight) DESC " />
+
+<#-- Im adding the new sorting cases to the existing switch statements -->
+
+<#-- Sorting by the post time from lowest to highest. In that code I used the conversation.last_post_time variable, which means the last time the thread was edited. If you want to sort posts by creation time, we can use the post.post_time variable.-->
+<#case "post_time">
+    <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
+<#break>
+
+ <#-- sorting by the number of kudos from lowest to highest -->
+    <#case "kudos_lowest">
+       <#assign orderClause = "ORDER BY kudos-lowest.sum(weight) ASC " />
    <#break>
-   <#case "views">
-       <#assign orderClause = "ORDER BY metrics.views DESC " />
-   <#break>
-   <#case "replies">
-       <#assign orderClause = "ORDER BY replies.count(*) DESC " />
-   <#break>
-   <#default>
-       <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
-   <#break>
+
+ <#-- Sorting by the unanswered questions additionally, the questions will be sorted descending by the time of the last post -->
+ <#case "unanswered">
+    <#assign orderClause = "ORDER BY conversation.last_post_time DESC" />
+    <#assign filterClause = "AND accepted_answer IS NULL" />
+<#break>
+
+<#-- Sorting by the questions with no solution in addition, the list of questions will be sorted by the time of the last post, starting with the most recent. And with the "filterClause" option, only unanswered questions are filtered.-->
+<#case "no_solution">
+    <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
+    <#assign filterClause = "AND accepted_answer IS NULL" />
+<#break>
+
 </#switch>
  
 <#assign limitClause = "LIMIT ${pageSize} OFFSET ${offset}" />
@@ -78,10 +91,14 @@ In order to always have 30 posts on the page, regardless of external settings, w
        <header>
            <div class="custom-message-list-header-left">
                <select id="community-activity-sorted-by">
-                   <option value="recent" <#if sorting == 'recent'>selected</#if>>${text.format("theme-lib.community-activity.recent")}</option>
-                   <option value="views" <#if sorting == 'views'>selected</#if>>${text.format("theme-lib.community-activity.views")}</option>
-                   <option value="replies" <#if sorting == 'replies'>selected</#if>>${text.format("theme-lib.community-activity.replies")}</option>
-                   <option value="kudos" <#if sorting == 'kudos'>selected</#if>>${text.format("theme-lib.community-activity.kudos")}</option>
+
+               <#-- Now Im adding the new sorting options to the dropdown menu -->
+
+                  <option value="post_time" <#if sorting == 'post_time'>selected</#if>>${text.format("theme-lib.community-activity.post-time")}</option>
+                  <option value="kudos_lowest" <#if sorting == 'kudos_lowest'>selected</#if>>${text.format("theme-lib.community-activity.kudos_lowest")}</option>
+                  <option value="unanswered" <#if sorting == 'unanswered'>selected</#if>>${text.format("theme-lib.community-activity.unanswered")}</option>
+                  <option value="no_solution" <#if sorting == 'no_solution'>selected</#if>>${text.format("theme-lib.community-activity.no-solution")}</option>
+
                </select>
                <#if page.interactionStyle=="idea">
                  <@component id="custom.idea.status.label" />
@@ -159,7 +176,7 @@ In order to always have 30 posts on the page, regardless of external settings, w
    <#-- Task 2:
    Change the name of class for solved threads (choose your own name) -->
        <#assign solved = "new-name-thread-solved" />
-       <#assign msg_status_icon = "new-name--thread-solved" />
+       <#assign msg_status_icon = "new-name-thread-solved" />
        <#assign msg_status_txt = "theme-lib.general.thread-solved" />
    </#if>
    <#if !msg.user_context.read>
